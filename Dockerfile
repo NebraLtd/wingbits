@@ -26,7 +26,7 @@ RUN apt update && \
 
 FROM base AS buildstep
 
-ARG READSB_COMMIT=d794155ba65796a76cd0a436f9709f4601509320
+ARG READSB_BRANCH=d794155ba65796a76cd0a436f9709f4601509320
 ARG TEMP_INSTALL="git gcc make libusb-1.0-0-dev ncurses-dev build-essential debhelper libncurses5-dev zlib1g-dev python3-dev libzstd-dev pkg-config"
 
 WORKDIR /tmp
