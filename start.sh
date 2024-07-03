@@ -18,9 +18,9 @@ missing_variables=false
 
 if [ -f /var/nebra/wingbits.json ]; then
     echo "Wingbits config JSON found!"
-    WINGBITS_DEVICE_ID=$(cat wingbits.json | jq -r '.node_name')
-    LAT=$(cat wingbits.json | jq -r '.latitude')
-    LON=$(cat wingbits.json | jq -r '.longitude')
+    WINGBITS_DEVICE_ID=$(cat /var/nebra/wingbits.json | jq -r '.node_name')
+    LAT=$(cat /var/nebra/wingbits.json | jq -r '.latitude')
+    LON=$(cat /var/nebra/wingbits.json | jq -r '.longitude')
 else
     echo "Wingbits config JSON not found!"
 fi
