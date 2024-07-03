@@ -51,6 +51,22 @@ sed -i -e 's/RRATimespan 96048000/\0\nRRATimespan 576288000/' /etc/collectd/coll
 sed -i -e 's/XFF.*/XFF 0.8/' /etc/collectd/collectd.conf
 sed -i -e 's/skyview978/skyaware978/' /etc/collectd/collectd.conf
 
+# unlisted interfaces
+for path in /sys/class/net/*
+do
+    iface=$(basename $path)
+    # no action on existing interfaces
+    fgrep -q 'Interface "'$iface'"' /etc/collectd/collectd.conf && continue
+    # only add interface starting with et en and wl
+    case $iface in
+        et*|en*|wl*)
+sed -i -e '/<Plugin "interface">/{a\
+    Interface "'$iface'"
+}' /etc/collectd/collectd.conf
+        ;;
+    esac
+done
+
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html /usr/share/graphs1090
 cp default /etc/default/graphs1090
@@ -58,6 +74,10 @@ cp default /usr/share/graphs1090/default-config
 cp collectd.conf /usr/share/graphs1090/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
 cp nginx-graphs1090.conf /usr/share/graphs1090
+
+echo "------------------"
+echo "TEST 1"
+echo "------------------"
 
 if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
@@ -68,6 +88,10 @@ if [ -d /etc/lighttpd/conf-enabled/ ] && [ -d /etc/lighttpd/conf-available ] && 
 then
     lighttpd=yes
 fi
+
+echo "------------------"
+echo "TEST 2"
+echo "------------------"
 
 if [[ $lighttpd == yes ]]; then
     cp 88-graphs1090.conf /etc/lighttpd/conf-available
@@ -83,6 +107,10 @@ if [[ $lighttpd == yes ]]; then
         rm -f /etc/lighttpd/conf-enabled/07-mod_alias.conf
     fi
 fi
+
+echo "------------------"
+echo "TEST 3"
+echo "------------------"
 
 SYM=/usr/share/graphs1090/data-symlink
 mkdir -p $SYM
@@ -106,6 +134,10 @@ else
     sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
 fi
 
+echo "------------------"
+echo "TEST 4"
+echo "------------------"
+
 SYM=/usr/share/graphs1090/978-symlink
 mkdir -p $SYM
 if [ -f /run/skyaware978/aircraft.json ]; then
@@ -118,18 +150,17 @@ else
     sed -i -e 's?.*URL_978 .*?#URL_978 "http://localhost/skyaware978"?' /etc/collectd/collectd.conf
 fi
 
-if grep jessie /etc/os-release >/dev/null
-then
-	echo --------------
-	echo "Some features are not available on jessie!"
-	echo --------------
-	sed -i -e 's/ADDNAN/+/' -e 's/TRENDNAN/TREND/' -e 's/MAXNAN/MAX/' -e 's/MINNAN/MIN/' $ipath/graphs1090.sh
-	sed -i -e '/axis-format/d' $ipath/graphs1090.sh
-fi
+echo "------------------"
+echo "TEST 5"
+echo "------------------"
 
 if [[ $lighttpd == yes ]]; then
     systemctl restart lighttpd
 fi
+
+echo "------------------"
+echo "TEST 6"
+echo "------------------"
 
 systemctl enable collectd &>/dev/null
 systemctl restart collectd &>/dev/null || true
@@ -156,6 +187,10 @@ if ! systemctl status collectd &>/dev/null; then
         echo --------------
     fi
 fi
+
+echo "------------------"
+echo "TEST 7"
+echo "------------------"
 
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
     bash $ipath/malarky.sh
