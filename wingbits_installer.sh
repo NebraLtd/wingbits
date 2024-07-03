@@ -142,10 +142,6 @@ echo "------------------"
 echo "TEST 5"
 echo "------------------"
 
-if [[ $lighttpd == yes ]]; then
-    systemctl restart lighttpd
-fi
-
 echo "------------------"
 echo "TEST 6"
 echo "------------------"
