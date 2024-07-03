@@ -1,3 +1,6 @@
+ARG BUILD_BOARD
+ARG BUILD_ARCH
+
 FROM balenalib/"$BUILD_BOARD"-debian-python:bullseye-build-20230530 AS base
 
 EXPOSE 30154
