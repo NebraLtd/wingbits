@@ -162,9 +162,6 @@ echo "------------------"
 echo "TEST 6"
 echo "------------------"
 
-systemctl enable collectd &>/dev/null
-systemctl restart collectd &>/dev/null || true
-
 echo "------------------"
 echo "TEST 7"
 echo "------------------"
