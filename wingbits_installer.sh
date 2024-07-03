@@ -12,18 +12,6 @@ curl -1sLf 'https://repositories.timber.io/public/vector/cfg/setup/bash.deb.sh' 
 bash -c "$(curl -L https://setup.vector.dev)"
 apt-get -y install vector
 
-# install readsb
-apt update
-apt install --no-install-recommends --no-install-suggests -y \
-    git build-essential debhelper libusb-1.0-0-dev \
-    librtlsdr-dev librtlsdr0 pkg-config \
-    libncurses-dev zlib1g-dev zlib1g libzstd-dev libzstd1
-git clone --depth 20 https://github.com/wiedehopf/readsb.git
-cd readsb
-export DEB_BUILD_OPTIONS=noddebs
-dpkg-buildpackage -b -Prtlsdr -ui -uc -us
-sudo dpkg -i ../readsb_*.deb
-
 # install graphs1090
 repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
@@ -196,4 +184,3 @@ echo "------------------"
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
     bash $ipath/malarky.sh
 fi
-
