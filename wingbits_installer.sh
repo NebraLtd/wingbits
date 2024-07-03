@@ -38,33 +38,20 @@ wget --timeout=30 -q -O /tmp/master.zip https://github.com/wiedehopf/graphs1090/
 unzip -q -o master.zip
 cd /tmp/graphs1090-master
 
-CPU_AIR=/run/collectd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
-if [[ -f "$CPU_AIR" ]]; then
-    cp "$CPU_AIR" /run/collectd/dump1090_cpu-airspy.rrd
-    rrdtool tune --maximum value:U /run/collectd/dump1090_cpu-airspy.rrd
-    cp -f /run/collectd/dump1090_cpu-airspy.rrd "$CPU_AIR"
-fi
+cp /run/collectd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd /run/collectd/dump1090_cpu-airspy.rrd
+rrdtool tune --maximum value:U /run/collectd/dump1090_cpu-airspy.rrd
+cp -f /run/collectd/dump1090_cpu-airspy.rrd /run/collectd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
+rrdtool tune --maximum value:U /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
 
-systemctl stop collectd &>/dev/null || true
+cp dump1090.db dump1090.py system_stats.py LICENSE /usr/share/graphs1090
+cp *.sh /usr/share/graphs1090
+cp malarky.conf /usr/share/graphs1090
+chmod u+x /usr/share/graphs1090/*.sh
+cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 &>/dev/null || true
+cp collectd.conf /etc/collectd/collectd.conf
 
-if [[ -f /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd ]]; then
-    rrdtool tune --maximum value:U /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
-fi
 
-cp dump1090.db dump1090.py system_stats.py LICENSE $ipath
-cp *.sh $ipath
-cp malarky.conf $ipath
-chmod u+x $ipath/*.sh
-if ! grep -e 'system_stats' -qs /etc/collectd/collectd.conf &>/dev/null; then
-	cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 &>/dev/null || true
-	cp collectd.conf /etc/collectd/collectd.conf
-	echo "------------------"
-	echo "Overwriting /etc/collectd/collectd.conf, the old file has been moved to /etc/collectd/collectd.conf.graphs1090"
-	echo "------------------"
-fi
-if ! grep -qs -e 'RRATimespan 576288000' /etc/collectd/collectd.conf &>/dev/null; then
-    sed -i -e 's/RRATimespan 96048000/\0\nRRATimespan 576288000/' /etc/collectd/collectd.conf
-fi
+sed -i -e 's/RRATimespan 96048000/\0\nRRATimespan 576288000/' /etc/collectd/collectd.conf
 sed -i -e 's/XFF.*/XFF 0.8/' /etc/collectd/collectd.conf
 sed -i -e 's/skyview978/skyaware978/' /etc/collectd/collectd.conf
 
@@ -192,25 +179,6 @@ fi
 
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
     bash $ipath/malarky.sh
-fi
-
-systemctl enable graphs1090
-systemctl restart graphs1090
-
-#fix readonly remount logic in fr24feed update script
-sed -i -e 's?$(mount | grep " on / " | grep rw)?{ mount | grep " on / " | grep rw; }?' /usr/lib/fr24/fr24feed_updater.sh &>/dev/null || true
-
-echo --------------
-echo --------------
-echo "All done! Graphs available at http://$(ip route get 1.2.3.4 | grep -m1 -o -P 'src \K[0-9,.]*')/graphs1090"
-echo "It may take up to 10 minutes until the first data is displayed"
-
-
-if command -v nginx &>/dev/null
-then
-	echo --------------
-	echo "To configure nginx for graphs1090, please add the following line(s) in the server {} section:"
-	echo "include /usr/share/graphs1090/nginx-graphs1090.conf;"
 fi
 
 # curl -sL https://github.com/wiedehopf/graphs1090/raw/master/install.sh | bash
