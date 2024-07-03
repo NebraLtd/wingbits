@@ -17,7 +17,7 @@ ENV DUMP1090_ADAPTIVE_MAX_GAIN=""
 ENV DUMP1090_SLOW_CPU=""
 ENV WINGBITS_CONFIG_VERSION=0.0.5
 
-ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 librtlsdr0 librtlsdr rtl-sdr libncurses6" 
+ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 librtlsdr0 rtl-sdr libncurses6" 
 
 RUN apt update && \
 	apt install -y $PERM_INSTALL && \
@@ -26,7 +26,7 @@ RUN apt update && \
 
 FROM base AS buildstep
 
-ARG READSB_COMMIT=21353a0d9eeb71f42371e053e0104ee06e21b87c
+ARG READSB_COMMIT=d794155ba65796a76cd0a436f9709f4601509320
 ARG TEMP_INSTALL="git gcc make libusb-1.0-0-dev ncurses-dev build-essential debhelper libncurses5-dev zlib1g-dev python3-dev libzstd-dev pkg-config"
 
 WORKDIR /tmp
