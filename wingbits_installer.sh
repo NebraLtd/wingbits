@@ -38,8 +38,6 @@ wget --timeout=30 -q -O /tmp/master.zip https://github.com/wiedehopf/graphs1090/
 unzip -q -o master.zip
 cd /tmp/graphs1090-master
 
-rrdtool tune --maximum value:U /run/collectd/dump1090_cpu-airspy.rrd
-cp -f /run/collectd/dump1090_cpu-airspy.rrd /run/collectd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
 rrdtool tune --maximum value:U /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
 
 cp dump1090.db dump1090.py system_stats.py LICENSE /usr/share/graphs1090
