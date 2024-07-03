@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-# Check if service has been disabled through the DISABLED_SERVICES environment variable.
-
-if [[ ",$(echo -e "${DISABLED_SERVICES}" | tr -d '[:space:]')," = *",$BALENA_SERVICE_NAME,"* ]]; then
-        echo "$BALENA_SERVICE_NAME is manually disabled."
-        sleep infinity
-fi
+# Wait for the diagnostics app to be loaded
+until wget -q -T 10 -O - http://diagnostics/json > /dev/null 2>&1
+do
+    echo "Diagnostics container not ready. Going to sleep."
+    sleep 10
+done
 
 # Verify that all the required varibles are set before starting up the application.
 
@@ -15,12 +15,21 @@ echo " "
 sleep 2
 
 missing_variables=false
+
+if [ -f /var/nebra/wingbits.json ]; then
+    echo "Wingbits config JSON found!"
+    WINGBITS_DEVICE_ID=$(cat wingbits.json | jq -r '.node_name')
+    LAT=$(cat wingbits.json | jq -r '.latitude')
+    LON=$(cat wingbits.json | jq -r '.longitude')
+else
+    echo "Wingbits config JSON not found!"
+fi
         
 # Begin defining all the required configuration variables.
 
 [ -z "$WINGBITS_DEVICE_ID" ] && echo "Wingbits Device ID is missing, will abort startup." && missing_variables=true || echo "Wingbits Device ID is set: $WINGBITS_DEVICE_ID"
-[ -z "$RECEIVER_HOST" ] && echo "Receiver host is missing, will abort startup." && missing_variables=true || echo "Receiver host is set: $RECEIVER_HOST"
-[ -z "$RECEIVER_PORT" ] && echo "Receiver port is missing, will abort startup." && missing_variables=true || echo "Receiver port is set: $RECEIVER_PORT"
+[ -z "$LAT" ] && echo "Receiver latitude is missing, will abort startup." && missing_variables=true || echo "Receiver latitude is set: $LAT"
+[ -z "$LON" ] && echo "Receiver longitude is missing, will abort startup." && missing_variables=true || echo "Receiver longitude is set: $LON"
 
 # End defining all the required configuration variables.
 
@@ -58,7 +67,10 @@ echo " "
 
 # Start vector and readsb and put in the background.
 /usr/bin/vector --watch-config &
-/usr/bin/feed-wingbits --net --debug=n --quiet --net-connector localhost,30006,json_out --write-json /run/wingbits-feed --net-beast-reduce-interval 0.5 --net-heartbeat 60 --net-ro-size 1280 --net-ro-interval 0.2 --net-ro-port 0 --net-sbs-port 0 --net-bi-port 30154 --net-bo-port 0 --net-ri-port 0 --net-connector "$RECEIVER_HOST","$RECEIVER_PORT",beast_in 2>&1 | stdbuf -o0 sed --unbuffered '/^$/d' |  awk -W interactive '{print "[readsb-wingbits]     " $0}' &
+/usr/bin/feed-wingbits --device-type rtlsdr --device "$DUMP1090_DEVICE" --lat "$LAT" --lon "$LON" --ppm "$DUMP1090_PPM" --max-range "$DUMP1090_MAX_RANGE" --net --debug=n --quiet --net-connector localhost,30006,json_out --write-json /run/wingbits-feed --net-beast-reduce-interval 0.5 --net-heartbeat 60 --net-ro-size 1280 --net-ro-interval 0.2 --net-ro-port 30002,30102 --net-sbs-port 30003 --net-bi-port 30004,30104 --net-bo-port 30005,30105 --net-ri-port 0 --raw --json-location-accuracy 2 2>&1 | stdbuf -o0 sed --unbuffered '/^$/d' |  awk -W interactive '{print "[readsb-wingbits]     " $0}' &
+  
+# Start lighthttpd and put it in the background.
+/usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf &
 
 # Wait for any services to exit.
 wait -n
