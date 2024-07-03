@@ -36,11 +36,15 @@ RUN apt update && \
 
 WORKDIR /tmp
 
-RUN git clone https://github.com/wiedehopf/readsb.git && \
-	cd readsb && \
-	git checkout $READSB_BRANCH && \
-	make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes
- 
+RUN apt install --no-install-recommends --no-install-suggests -y \
+            git build-essential debhelper libusb-1.0-0-dev \
+            librtlsdr-dev librtlsdr0 pkg-config \
+            libncurses-dev zlib1g-dev zlib1g libzstd-dev libzstd1 && \
+        git clone --depth 20 https://github.com/wiedehopf/readsb.git && \
+        cd readsb && \
+        export DEB_BUILD_OPTIONS=noddebs && \
+        dpkg-buildpackage -b -Prtlsdr -ui -uc -us && \
+        sudo dpkg -i ../readsb_*.deb
 
 FROM base AS release
 
