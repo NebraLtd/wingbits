@@ -20,7 +20,7 @@ mkdir -p /usr/share/graphs1090/installed
 mkdir -p /var/lib/graphs1090/scatter
 
 apt install --no-install-recommends --no-install-suggests -y \
-    git rrdtool wget unzip bash-builtins collectd-core libpython3.9
+    git rrdtool wget unzip bash-builtins collectd-core libpython3.9 jq
 cd /tmp
 wget --timeout=30 -q -O /tmp/master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip
 unzip -q -o master.zip
