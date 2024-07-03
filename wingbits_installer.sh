@@ -34,7 +34,9 @@ mkdir -p /var/lib/graphs1090/scatter
 
 apt install --no-install-recommends --no-install-suggests -y \
     git rrdtool wget unzip bash-builtins collectd-core libpython3.9
-wget --timeout=30 -q -O /tmp/master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip && unzip -q -o master.zip
+cd /tmp
+wget --timeout=30 -q -O /tmp/master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip
+unzip -q -o master.zip
 cd /tmp/graphs1090-master
 
 CPU_AIR=/run/collectd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
