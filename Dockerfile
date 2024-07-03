@@ -17,7 +17,7 @@ ENV DUMP1090_ADAPTIVE_MAX_GAIN=""
 ENV DUMP1090_SLOW_CPU=""
 ENV WINGBITS_CONFIG_VERSION=0.0.5
 
-ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g" 
+ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd" 
 
 RUN apt update && \
 	apt install -y $PERM_INSTALL && \
