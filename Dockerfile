@@ -36,9 +36,9 @@ RUN apt update && \
 
 WORKDIR /tmp
 
-RUN git clone --single-branch https://github.com/wiedehopf/readsb.git && \
+RUN git clone https://github.com/wiedehopf/readsb.git && \
 	cd readsb && \
-	git checkout $READSB_COMMIT && \
+	git checkout $READSB_BRANCH && \
 	make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes
  
 
