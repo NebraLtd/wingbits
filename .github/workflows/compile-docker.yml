@@ -59,6 +59,7 @@ jobs:
             BUILD_BOARD=${{ matrix.board }}
             BUILD_ARCH=${{ matrix.arch }}
           push: true
+          platforms: ${{ matrix.arch_full }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=registry,ref=nebraltd/wingbits:buildcache
