@@ -51,29 +51,13 @@ sed -i -e 's/RRATimespan 96048000/\0\nRRATimespan 576288000/' /etc/collectd/coll
 sed -i -e 's/XFF.*/XFF 0.8/' /etc/collectd/collectd.conf
 sed -i -e 's/skyview978/skyaware978/' /etc/collectd/collectd.conf
 
-# unlisted interfaces
-for path in /sys/class/net/*
-do
-    iface=$(basename $path)
-    # no action on existing interfaces
-    fgrep -q 'Interface "'$iface'"' /etc/collectd/collectd.conf && continue
-    # only add interface starting with et en and wl
-    case $iface in
-        et*|en*|wl*)
-sed -i -e '/<Plugin "interface">/{a\
-    Interface "'$iface'"
-}' /etc/collectd/collectd.conf
-        ;;
-    esac
-done
-
 rm -f /etc/cron.d/cron-graphs1090
-cp -r html $ipath
+cp -r html /usr/share/graphs1090
 cp default /etc/default/graphs1090
-cp default $ipath/default-config
-cp collectd.conf $ipath/default-collectd.conf
+cp default /usr/share/graphs1090/default-config
+cp collectd.conf /usr/share/graphs1090/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
-cp nginx-graphs1090.conf $ipath
+cp nginx-graphs1090.conf /usr/share/graphs1090
 
 if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
 then
