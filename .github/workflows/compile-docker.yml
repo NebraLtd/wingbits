@@ -60,6 +60,7 @@ jobs:
             BUILD_ARCH=${{ matrix.arch }}
           push: true
           platforms: ${{ matrix.arch_full }}
+          provenance: false
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=registry,ref=nebraltd/wingbits:buildcache
