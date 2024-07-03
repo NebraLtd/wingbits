@@ -27,7 +27,12 @@ sudo dpkg -i ../readsb_*.deb
 # install graphs1090
 repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
-install=0
+
+function copyNoClobber() {
+    if ! [[ -f "$2" ]]; then
+        cp "$1" "$2"
+    fi
+}
 
 mkdir -p /usr/share/graphs1090/installed
 mkdir -p /var/lib/graphs1090/scatter
