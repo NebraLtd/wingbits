@@ -165,6 +165,10 @@ echo "------------------"
 systemctl enable collectd &>/dev/null
 systemctl restart collectd &>/dev/null || true
 
+echo "------------------"
+echo "TEST 7"
+echo "------------------"
+
 if ! systemctl status collectd &>/dev/null; then
     echo --------------
     echo "collectd isn't working, trying to install various libpython versions to work around the issue."
@@ -189,7 +193,7 @@ if ! systemctl status collectd &>/dev/null; then
 fi
 
 echo "------------------"
-echo "TEST 7"
+echo "TEST 8"
 echo "------------------"
 
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
