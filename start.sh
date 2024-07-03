@@ -70,7 +70,7 @@ echo " "
 /usr/bin/feed-wingbits --device-type rtlsdr --device "$DUMP1090_DEVICE" --lat "$LAT" --lon "$LON" --ppm "$DUMP1090_PPM" --max-range "$DUMP1090_MAX_RANGE" --net --debug=n --quiet --net-connector localhost,30006,json_out --write-json /run/wingbits-feed --net-beast-reduce-interval 0.5 --net-heartbeat 60 --net-ro-size 1280 --net-ro-interval 0.2 --net-ro-port 30002,30102 --net-sbs-port 30003 --net-bi-port 30004,30104 --net-bo-port 30005,30105 --net-ri-port 0 --raw --json-location-accuracy 2 2>&1 | stdbuf -o0 sed --unbuffered '/^$/d' |  awk -W interactive '{print "[readsb-wingbits]     " $0}' &
   
 # Start lighthttpd and put it in the background.
-# /usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf &
+/usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf &
 
 # Wait for any services to exit.
 wait -n
