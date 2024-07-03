@@ -28,12 +28,6 @@ sudo dpkg -i ../readsb_*.deb
 repo="https://github.com/wiedehopf/graphs1090"
 ipath=/usr/share/graphs1090
 
-function copyNoClobber() {
-    if ! [[ -f "$2" ]]; then
-        cp "$1" "$2"
-    fi
-}
-
 mkdir -p /usr/share/graphs1090/installed
 mkdir -p /var/lib/graphs1090/scatter
 
@@ -92,7 +86,7 @@ done
 
 rm -f /etc/cron.d/cron-graphs1090
 cp -r html $ipath
-copyNoClobber default /etc/default/graphs1090
+cp default /etc/default/graphs1090
 cp default $ipath/default-config
 cp collectd.conf $ipath/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
