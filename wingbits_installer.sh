@@ -38,7 +38,7 @@ wget --timeout=30 -q -O /tmp/master.zip https://github.com/wiedehopf/graphs1090/
 unzip -q -o master.zip
 cd /tmp/graphs1090-master
 
-rrdtool tune --maximum value:U /var/lib/collectd/rrd/localhost/dump1090-localhost/dump1090_cpu-airspy.rrd
+mkdir -p /var/lib/collectd/rrd/localhost/dump1090-localhost
 
 cp dump1090.db dump1090.py system_stats.py LICENSE /usr/share/graphs1090
 cp *.sh /usr/share/graphs1090
@@ -46,7 +46,6 @@ cp malarky.conf /usr/share/graphs1090
 chmod u+x /usr/share/graphs1090/*.sh
 cp /etc/collectd/collectd.conf /etc/collectd/collectd.conf.graphs1090 &>/dev/null || true
 cp collectd.conf /etc/collectd/collectd.conf
-
 
 sed -i -e 's/RRATimespan 96048000/\0\nRRATimespan 576288000/' /etc/collectd/collectd.conf
 sed -i -e 's/XFF.*/XFF 0.8/' /etc/collectd/collectd.conf
@@ -177,8 +176,4 @@ fi
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
     bash $ipath/malarky.sh
 fi
-
-# curl -sL https://github.com/wiedehopf/graphs1090/raw/master/install.sh | bash
-
-# install tar1090
 
