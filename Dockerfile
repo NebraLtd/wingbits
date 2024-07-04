@@ -26,7 +26,7 @@ RUN apt update && \
 
 FROM base AS buildstep
 
-ARG READSB_BRANCH=d794155ba65796a76cd0a436f9709f4601509320
+ARG READSB_COMMIT=4f7a7f18c5f88ed57145c04038a04a10d48f8638
 ARG TEMP_INSTALL="git gcc make libusb-1.0-0-dev ncurses-dev build-essential debhelper libncurses5-dev zlib1g-dev python3-dev libzstd-dev pkg-config"
 
 WORKDIR /tmp
@@ -36,9 +36,7 @@ RUN apt update && \
 
 WORKDIR /tmp
 
-ARG READSB_COMMIT=f535e517996ad04ce8126a58757a9b91a82fe542
-
-RUN git clone --single-branch https://github.com/adsb-related-code/readsb && \
+RUN git clone --single-branch https://github.com/wiedehopf/readsb && \
 	cd readsb && \
 	git checkout $READSB_COMMIT && \
 	make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes
