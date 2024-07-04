@@ -24,7 +24,22 @@ if [ -f /var/nebra/wingbits.json ]; then
 else
     echo "Wingbits config JSON not found!"
 fi
-        
+
+if [ -n "$WINGBITS_DEVICE_ID_OVERRIDE" ]; then
+    WINGBITS_DEVICE_ID="$WINGBITS_DEVICE_ID_OVERRIDE"
+    echo "Wingbits Device ID Override Set - using instead of JSON value."
+fi
+
+if [ -n "$LAT_OVERRIDE" ]; then
+    LAT="$LAT_OVERRIDE"
+    echo "Wingbits Latitude Override Set - using instead of JSON value."
+fi
+
+if [ -n "$LON_OVERRIDE" ]; then
+    LON="$LON_OVERRIDE"
+    echo "Wingbits Longitude Override Set - using instead of JSON value."
+fi
+
 # Begin defining all the required configuration variables.
 
 [ -z "$WINGBITS_DEVICE_ID" ] && echo "Wingbits Device ID is missing, will abort startup." && missing_variables=true || echo "Wingbits Device ID is set: $WINGBITS_DEVICE_ID"
