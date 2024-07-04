@@ -24,6 +24,7 @@ ipath=/usr/share/graphs1090
 
 mkdir -p /usr/share/graphs1090/installed
 mkdir -p /var/lib/graphs1090/scatter
+mkdir -p /run/graphs1090
 
 apt install --no-install-recommends --no-install-suggests -y \
     git rrdtool wget unzip bash-builtins collectd-core libpython3.9 jq
