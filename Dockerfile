@@ -17,7 +17,7 @@ ENV DUMP1090_ADAPTIVE_MAX_GAIN=""
 ENV DUMP1090_SLOW_CPU=""
 ENV WINGBITS_CONFIG_VERSION=0.0.4
 
-ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 rtl-sdr libncurses6 jq"
+ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 librtlsdr0 rtl-sdr libncurses6 jq"
 
 RUN apt update && \
 	apt install -y $PERM_INSTALL && \
@@ -48,13 +48,6 @@ COPY start.sh /
 COPY --from=buildstep /tmp/readsb/readsb /usr/bin/feed-wingbits
 
 WORKDIR /tmp
-
-ARG ADDITIONAL_INSTALL="librtlsdr0"
-
-RUN apt update && \
-	apt install -y $ADDITIONAL_INSTALL && \
-	apt clean && apt autoclean && apt autoremove && \
-	rm -rf /var/lib/apt/lists/*
  
 RUN chmod +x /tmp/wingbits_installer.sh && \
 	./wingbits_installer.sh && \
