@@ -91,7 +91,7 @@ echo " "
 /usr/sbin/collectd 2>&1 | stdbuf -o0 sed --unbuffered '/^$/d' |  awk -W interactive '{print "[collectd-wingbits]     " $0}'
 
 # Start graphs1090 and put it in the background.
-# /usr/share/graphs1090/service-graphs1090.sh 2>&1 | stdbuf -o0 sed --unbuffered '/^$/d' |  awk -W interactive '{print "[graphs1090-wingbits]     " $0}'&
+/usr/share/graphs1090/service-graphs1090.sh 2>&1 | stdbuf -o0 sed --unbuffered '/^$/d' |  awk -W interactive '{print "[graphs1090-wingbits]     " $0}'&
 
 # Wait for any services to exit.
 wait -n
