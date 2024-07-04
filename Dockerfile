@@ -17,7 +17,7 @@ ENV DUMP1090_ADAPTIVE_MAX_GAIN=""
 ENV DUMP1090_SLOW_CPU=""
 ENV WINGBITS_CONFIG_VERSION=0.0.4
 
-ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 librtlsdr0 rtl-sdr libncurses6 jq" 
+ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 rtl-sdr libncurses6 jq"
 
 RUN apt update && \
 	apt install -y $PERM_INSTALL && \
@@ -36,15 +36,12 @@ RUN apt update && \
 
 WORKDIR /tmp
 
-RUN apt install --no-install-recommends --no-install-suggests -y \
-            git build-essential debhelper libusb-1.0-0-dev \
-            librtlsdr-dev librtlsdr0 pkg-config \
-            libncurses-dev zlib1g-dev zlib1g libzstd-dev libzstd1 && \
-        git clone --depth 20 https://github.com/wiedehopf/readsb.git && \
-        cd readsb && \
-        export DEB_BUILD_OPTIONS=noddebs && \
-        dpkg-buildpackage -b --build-profiles=rtlsdr -P=rtlsdr -P=bladerf -P=hackrf -ui -uc -us && \
-        sudo dpkg -i ../readsb_*.deb
+ARG READSB_COMMIT=f535e517996ad04ce8126a58757a9b91a82fe542
+
+RUN git clone --single-branch https://github.com/adsb-related-code/readsb && \
+	cd readsb && \
+	git checkout $READSB_COMMIT && \
+	make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes
 
 FROM base AS release
 
@@ -54,6 +51,13 @@ COPY --from=buildstep /tmp/readsb/readsb /usr/bin/feed-wingbits
 
 WORKDIR /tmp
 
+ARG ADDITIONAL_INSTALL="librtlsdr0"
+
+RUN apt update && \
+	apt install -y $ADDITIONAL_INSTALL && \
+	apt clean && apt autoclean && apt autoremove && \
+	rm -rf /var/lib/apt/lists/*
+ 
 RUN chmod +x /tmp/wingbits_installer.sh && \
 	./wingbits_installer.sh && \
 	chmod +x /start.sh && \
