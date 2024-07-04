@@ -53,6 +53,7 @@ RUN chmod +x /tmp/wingbits_installer.sh && \
 	./wingbits_installer.sh && \
 	chmod +x /start.sh && \
 	mkdir -p /run/wingbits-feed && \
+        mkdir -p /run/readsb && \
 	mkdir -p /etc/wingbits && \
 	echo "$WINGBITS_CONFIG_VERSION" > /etc/wingbits/version && \
 	rm -rf /tmp/*
