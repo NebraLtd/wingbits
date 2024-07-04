@@ -43,7 +43,7 @@ RUN apt install --no-install-recommends --no-install-suggests -y \
         git clone --depth 20 https://github.com/wiedehopf/readsb.git && \
         cd readsb && \
         export DEB_BUILD_OPTIONS=noddebs && \
-        dpkg-buildpackage -b -Prtlsdr -Pbladerf -Phackrf -ui -uc -us && \
+        dpkg-buildpackage -b -P rtlsdr -P bladerf -P hackrf -ui -uc -us && \
         sudo dpkg -i ../readsb_*.deb
 
 FROM base AS release
