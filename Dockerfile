@@ -7,12 +7,13 @@ ARG BUILD_BOARD
 FROM balenalib/"$BUILD_BOARD"-debian-python:bullseye-build-20230530 AS builder
 
 ARG READSB_COMMIT=4f7a7f18c5f88ed57145c04038a04a10d48f8638
-ARG TEMP_INSTALL="git libusb-1.0-0-dev libncurses-dev build-essential librtlsdr-dev debhelper zlib1g-dev libzstd-dev pkg-config libzstd1 curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 librtlsdr0 rtl-sdr libncurses6 jq"
+ARG TEMP_INSTALL="git libusb-1.0-0-dev libncurses-dev build-essential librtlsdr-dev debhelper zlib1g-dev libzstd-dev pkg-config libzstd1"
+ARG PERM_INSTALL="wget curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 librtlsdr0 rtl-sdr libncurses6 jq"
 
 WORKDIR /tmp
 
 RUN apt update && \
-	apt install -y $TEMP_INSTALL
+	apt install -y $TEMP_INSTALL $PERM_INSTALL
 
 WORKDIR /tmp
     
