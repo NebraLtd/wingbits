@@ -17,13 +17,6 @@ ENV DUMP1090_ADAPTIVE_MAX_GAIN=""
 ENV DUMP1090_SLOW_CPU=""
 ENV WINGBITS_CONFIG_VERSION=0.0.4
 
-ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 librtlsdr0 rtl-sdr libncurses6 jq"
-
-RUN apt update && \
-	apt install -y $PERM_INSTALL && \
-	apt clean && apt autoclean && apt autoremove && \
-	rm -rf /var/lib/apt/lists/*
-
 FROM base AS buildstep
 
 ARG READSB_COMMIT=4f7a7f18c5f88ed57145c04038a04a10d48f8638
@@ -43,6 +36,13 @@ RUN git clone --single-branch https://github.com/wiedehopf/readsb && \
 
 FROM base AS release
 
+ARG PERM_INSTALL="curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 libbladerf2 libhackrf0 librtlsdr0 rtl-sdr libncurses6 jq"
+
+RUN apt update && \
+	apt install -y $PERM_INSTALL && \
+	apt clean && apt autoclean && apt autoremove && \
+	rm -rf /var/lib/apt/lists/*
+ 
 COPY wingbits_installer.sh /tmp
 COPY start.sh /
 COPY --from=buildstep /tmp/readsb/readsb /usr/bin/feed-wingbits
