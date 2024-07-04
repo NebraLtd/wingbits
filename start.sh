@@ -87,5 +87,11 @@ echo " "
 # Start lighthttpd and put it in the background.
 /usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf &
 
+# Start collectd and put it in the background
+/usr/sbin/collectd &
+
+# Start graphs1090 and put it in the backgrounf
+/usr/share/graphs1090/service-graphs1090.sh &
+
 # Wait for any services to exit.
 wait -n
