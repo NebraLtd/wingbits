@@ -50,7 +50,7 @@ RUN apt update && \
  
 COPY wingbits_installer.sh /tmp
 COPY start.sh /
-COPY --from=buildstep /tmp/readsb/readsb /usr/bin/feed-wingbits
+COPY --from=builder /tmp/readsb/readsb /usr/bin/feed-wingbits
 
 WORKDIR /tmp
  
