@@ -39,7 +39,7 @@ WORKDIR /tmp
 RUN git clone --single-branch https://github.com/wiedehopf/readsb && \
 	cd readsb && \
 	git checkout $READSB_COMMIT && \
-	make -j3 AIRCRAFT_HASH_BITS=14 RTLSDR=yes
+	make AIRCRAFT_HASH_BITS=14 RTLSDR=yes
 
 FROM base AS release
 
