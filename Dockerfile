@@ -59,6 +59,7 @@ RUN chmod +x /tmp/wingbits_installer.sh && \
 
 #COPY vector.yaml /etc/vector/vector.yaml
 RUN curl -o /etc/vector/vector.yaml https://gitlab.com/wingbits/config/-/raw/$WINGBITS_CONFIG_VERSION/vector.yaml
+RUN curl -0 /etc/default/tar1090 https://raw.githubusercontent.com/wiedehopf/tar1090/master/default
 RUN sed -i 's|DEVICE_ID|WINGBITS_DEVICE_ID|g' /etc/vector/vector.yaml
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/start.sh"]
