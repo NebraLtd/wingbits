@@ -1,7 +1,31 @@
-ARG BUILD_BOARD
-ARG BUILD_ARCH
+# Docker Container that runs the Wingbits
 
-FROM balenalib/"$BUILD_BOARD"-debian-python:bullseye-build-20230530 AS base
+ARG BUILD_BOARD
+
+####################################################################################################
+################################## Stage: builder ##################################################
+FROM balenalib/"$BUILD_BOARD"-debian-python:bullseye-build-20230530 AS builder
+
+ARG READSB_COMMIT=4f7a7f18c5f88ed57145c04038a04a10d48f8638
+ARG TEMP_INSTALL="git libusb-1.0-0-dev libncurses-dev build-essential librtlsdr-dev debhelper zlib1g-dev libzstd-dev pkg-config libzstd1 curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 librtlsdr0 rtl-sdr libncurses6 jq"
+
+WORKDIR /tmp
+
+RUN apt update && \
+	apt install -y $TEMP_INSTALL
+
+WORKDIR /tmp
+    
+RUN git clone --single-branch https://github.com/wiedehopf/readsb && \
+	cd readsb && \
+	git checkout $READSB_COMMIT && \
+	make AIRCRAFT_HASH_BITS=14 RTLSDR=yes
+
+# No need to cleanup the builder
+
+####################################################################################################
+################################### Stage: runner ##################################################
+FROM balenalib/"$BUILD_BOARD"-debian-python:bullseye-run-20230530 AS runner
 
 EXPOSE 30154
 
@@ -23,25 +47,6 @@ RUN apt update && \
 	apt install -y $PERM_INSTALL && \
 	apt clean && apt autoclean && apt autoremove && \
 	rm -rf /var/lib/apt/lists/*
- 
-FROM base AS buildstep
-
-ARG READSB_COMMIT=4f7a7f18c5f88ed57145c04038a04a10d48f8638
-ARG TEMP_INSTALL="git libusb-1.0-0-dev libncurses-dev build-essential librtlsdr-dev debhelper zlib1g-dev libzstd-dev pkg-config libzstd1"
-
-WORKDIR /tmp
-
-RUN apt update && \
-	apt install -y $TEMP_INSTALL
-
-WORKDIR /tmp
-    
-RUN git clone --single-branch https://github.com/wiedehopf/readsb && \
-	cd readsb && \
-	git checkout $READSB_COMMIT && \
-	make AIRCRAFT_HASH_BITS=14 RTLSDR=yes
-
-FROM base AS release
  
 COPY wingbits_installer.sh /tmp
 COPY start.sh /
