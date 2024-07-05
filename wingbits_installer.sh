@@ -106,4 +106,6 @@ fi
 # Cleanup
 rm -Rf /tmp/graphs1090-master
 rm -Rf /tmp/master.zip
+rm -Rf /usr/local/share/tar1090/git
+rm -Rf /usr/local/share/tar1090/git-db
 apt purge unzip git
