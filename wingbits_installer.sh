@@ -106,4 +106,4 @@ fi
 # Cleanup
 rm -Rf /tmp/graphs1090-master
 rm -Rf /tmp/master.zip
-apt purge unzip
+apt purge unzip git
