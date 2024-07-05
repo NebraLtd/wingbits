@@ -45,10 +45,8 @@ ENV WINGBITS_CONFIG_VERSION=0.0.5
 ARG PERM_INSTALL="wget curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 librtlsdr0 rtl-sdr libncurses6 jq"
 
 RUN apt update && \
-	apt install -y $PERM_INSTALL && \
-	apt clean && apt autoclean && apt autoremove && \
-	rm -rf /var/lib/apt/lists/*
- 
+	apt install -y $PERM_INSTALL
+
 COPY wingbits_installer.sh /tmp
 COPY start.sh /
 COPY --from=builder /tmp/readsb/readsb /usr/bin/feed-wingbits
@@ -67,5 +65,8 @@ RUN chmod +x /tmp/wingbits_installer.sh && \
 RUN curl -o /etc/vector/vector.yaml https://gitlab.com/wingbits/config/-/raw/master/vector.yaml
 RUN curl -0 /etc/default/tar1090 https://raw.githubusercontent.com/wiedehopf/tar1090/master/default
 RUN sed -i 's|DEVICE_ID|WINGBITS_DEVICE_ID|g' /etc/vector/vector.yaml
+
+RUN apt clean && apt autoclean && apt autoremove && \
+	rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/start.sh"]
