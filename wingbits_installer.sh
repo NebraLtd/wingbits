@@ -7,16 +7,13 @@ echo System Architecture: $arch
 cd /tmp
 
 # install vector
-
 curl -1sLf 'https://repositories.timber.io/public/vector/cfg/setup/bash.deb.sh' | sudo -E bash
 bash -c "$(curl -L https://setup.vector.dev)"
 apt-get -y install vector
 
 # install tar1090
-if [[ -z "$NO_TAR1090" ]] ; then
-    wget -O tar1090-install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh
-    bash tar1090-install.sh /run/readsb
-fi
+wget -O tar1090-install.sh https://raw.githubusercontent.com/wiedehopf/tar1090/master/install.sh
+bash tar1090-install.sh /run/readsb
 
 # install graphs1090
 repo="https://github.com/wiedehopf/graphs1090"
@@ -70,51 +67,25 @@ cp collectd.conf /usr/share/graphs1090/default-collectd.conf
 cp service.service /lib/systemd/system/graphs1090.service
 cp nginx-graphs1090.conf /usr/share/graphs1090
 
-echo "------------------"
-echo "TEST 1"
-echo "------------------"
+# configure lighttpd
+ln -snf /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled
+mkdir -p /etc/lighttpd/conf-available
+cp 88-graphs1090.conf /etc/lighttpd/conf-available
+ln -snf /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
+cp 95-graphs1090-otherport.conf /etc/lighttpd/conf-available
+ln -snf /etc/lighttpd/conf-available/95-graphs1090-otherport.conf /etc/lighttpd/conf-enabled/95-graphs1090-otherport.conf
 
-if [ -d /etc/lighttpd/conf.d/ ] && ! [ -d /etc/lighttpd/conf-enabled/ ] && ! [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
-then
-    ln -snf /etc/lighttpd/conf.d /etc/lighttpd/conf-enabled
-    mkdir -p /etc/lighttpd/conf-available
+if ! grep -qs -E -e '^[^#]*"mod_alias"' /etc/lighttpd/lighttpd.conf /etc/lighttp/conf-enabled/* /etc/lighttpd/external.conf; then
+    echo 'server.modules += ( "mod_alias" )' > /etc/lighttpd/conf-available/07-mod_alias.conf
+    ln -s -f /etc/lighttpd/conf-available/07-mod_alias.conf /etc/lighttpd/conf-enabled/07-mod_alias.conf
+else
+    rm -f /etc/lighttpd/conf-enabled/07-mod_alias.conf
 fi
-if [ -d /etc/lighttpd/conf-enabled/ ] && [ -d /etc/lighttpd/conf-available ] && command -v lighttpd &>/dev/null
-then
-    lighttpd=yes
-fi
-
-echo "------------------"
-echo "TEST 2"
-echo "------------------"
-
-if [[ $lighttpd == yes ]]; then
-    cp 88-graphs1090.conf /etc/lighttpd/conf-available
-    ln -snf /etc/lighttpd/conf-available/88-graphs1090.conf /etc/lighttpd/conf-enabled/88-graphs1090.conf
-
-    cp 95-graphs1090-otherport.conf /etc/lighttpd/conf-available
-    ln -snf /etc/lighttpd/conf-available/95-graphs1090-otherport.conf /etc/lighttpd/conf-enabled/95-graphs1090-otherport.conf
-
-    if ! grep -qs -E -e '^[^#]*"mod_alias"' /etc/lighttpd/lighttpd.conf /etc/lighttp/conf-enabled/* /etc/lighttpd/external.conf; then
-        echo 'server.modules += ( "mod_alias" )' > /etc/lighttpd/conf-available/07-mod_alias.conf
-        ln -s -f /etc/lighttpd/conf-available/07-mod_alias.conf /etc/lighttpd/conf-enabled/07-mod_alias.conf
-    else
-        rm -f /etc/lighttpd/conf-enabled/07-mod_alias.conf
-    fi
-fi
-
-echo "------------------"
-echo "TEST 3"
-echo "------------------"
 
 SYM=/usr/share/graphs1090/data-symlink
 mkdir -p $SYM
 ln -snf /run/readsb $SYM/data
 sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
-
-echo "------------------"
-echo "TEST 4"
-echo "------------------"
 
 SYM=/usr/share/graphs1090/978-symlink
 mkdir -p $SYM
@@ -127,25 +98,6 @@ elif [ -f /run/adsbexchange-978/aircraft.json ]; then
 else
     sed -i -e 's?.*URL_978 .*?#URL_978 "http://localhost/skyaware978"?' /etc/collectd/collectd.conf
 fi
-
-echo "------------------"
-echo "TEST 5"
-echo "------------------"
-
-
-if ! systemctl status collectd &>/dev/null; then
-    echo --------------
-    echo "collectd isn't working, trying to install various libpython versions to work around the issue."
-    echo --------------
-    apt update
-    apt-get install --no-install-suggests --no-install-recommends -y 'libpython2.7' || true
-    apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
-        apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
-        apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7' || true
-
-echo "------------------"
-echo "TEST 6"
-echo "------------------"
 
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
     bash $ipath/malarky.sh
