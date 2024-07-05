@@ -109,25 +109,8 @@ echo "------------------"
 
 SYM=/usr/share/graphs1090/data-symlink
 mkdir -p $SYM
-if [ -f /run/dump1090-fa/stats.json ]; then
-    ln -snf /run/dump1090-fa $SYM/data
-    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
-elif [ -f /run/readsb/stats.json ]; then
-    ln -snf /run/readsb $SYM/data
-    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
-elif [ -f /run/adsbexchange-feed/stats.json ]; then
-    ln -snf /run/adsbexchange-feed $SYM/data
-    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
-elif [ -f /run/dump1090/stats.json ]; then
-    ln -snf /run/dump1090 $SYM/data
-    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
-elif [ -f /run/dump1090-mutability/stats.json ]; then
-    ln -snf /run/dump1090-mutability $SYM/data
-    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
-else
-    ln -snf /run/readsb $SYM/data
-    sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
-fi
+ln -snf /run/readsb $SYM/data
+sed -i -e 's?URL .*?URL "file:///usr/share/graphs1090/data-symlink"?' /etc/collectd/collectd.conf
 
 echo "------------------"
 echo "TEST 4"
@@ -159,19 +142,6 @@ if ! systemctl status collectd &>/dev/null; then
     apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.9' || \
         apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.8' || \
         apt-get install --no-install-suggests --no-install-recommends -y 'libpython3.7' || true
-
-    systemctl restart collectd || true
-    if ! systemctl status collectd &>/dev/null; then
-        echo --------------
-        echo "Showing the log for collectd using this command: journalctl --no-pager -u collectd | tail -n40"
-        echo --------------
-        journalctl --no-pager -u collectd | tail -n40
-        echo --------------
-        echo "collectd still isn't working, you can try and rerun the install script at some other time."
-        echo "Or report this issue with the full 40 lines above."
-        echo --------------
-    fi
-fi
 
 echo "------------------"
 echo "TEST 6"
