@@ -27,7 +27,7 @@ mkdir -p /var/lib/graphs1090/scatter
 mkdir -p /run/graphs1090
 
 apt install --no-install-recommends --no-install-suggests -y \
-    git rrdtool wget unzip bash-builtins collectd-core libpython3.9 jq
+    rrdtool unzip bash-builtins collectd-core libpython3.9
 cd /tmp
 wget --timeout=30 -q -O /tmp/master.zip https://github.com/wiedehopf/graphs1090/archive/master.zip
 unzip -q -o master.zip
@@ -149,13 +149,6 @@ echo "------------------"
 echo "TEST 5"
 echo "------------------"
 
-echo "------------------"
-echo "TEST 6"
-echo "------------------"
-
-echo "------------------"
-echo "TEST 7"
-echo "------------------"
 
 if ! systemctl status collectd &>/dev/null; then
     echo --------------
@@ -181,9 +174,13 @@ if ! systemctl status collectd &>/dev/null; then
 fi
 
 echo "------------------"
-echo "TEST 8"
+echo "TEST 6"
 echo "------------------"
 
 if ! [[ -f /usr/share/graphs1090/noMalarky ]]; then
     bash $ipath/malarky.sh
 fi
+
+# Cleanup
+rm -Rf /tmp/graphs1090-master
+rm -Rf /tmp/master.zip
