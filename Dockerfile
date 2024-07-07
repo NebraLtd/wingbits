@@ -26,7 +26,7 @@ RUN git clone --single-branch https://github.com/wiedehopf/readsb && \
 
 ####################################################################################################
 ################################### Stage: runner ##################################################
-FROM debian:stable AS runner
+FROM debian:bullseye-slim AS runner
 
 EXPOSE 30154
 
