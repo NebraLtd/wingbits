@@ -26,7 +26,7 @@ RUN git clone --single-branch https://github.com/wiedehopf/readsb && \
 
 ####################################################################################################
 ################################### Stage: runner ##################################################
-FROM balenalib/"$BUILD_BOARD"-debian-python:bullseye-run-20230530 AS runner
+FROM alpine:3.20 AS runner
 
 EXPOSE 30154
 
