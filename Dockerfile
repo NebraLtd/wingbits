@@ -66,7 +66,9 @@ RUN curl -o /etc/vector/vector.yaml https://gitlab.com/wingbits/config/-/raw/mas
 RUN curl -0 /etc/default/tar1090 https://raw.githubusercontent.com/wiedehopf/tar1090/master/default
 RUN sed -i 's|DEVICE_ID|WINGBITS_DEVICE_ID|g' /etc/vector/vector.yaml
 
-RUN apt clean && apt autoclean && apt autoremove && \
-	rm -rf /var/lib/apt/lists/*
+RUN apt clean
+RUN apt autoclean
+RUN apt autoremove
+RUN rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/start.sh"]
