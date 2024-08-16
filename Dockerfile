@@ -40,7 +40,7 @@ ENV DUMP1090_ADAPTIVE_BURST=""
 ENV DUMP1090_ADAPTIVE_MIN_GAIN=""
 ENV DUMP1090_ADAPTIVE_MAX_GAIN=""
 ENV DUMP1090_SLOW_CPU=""
-ENV WINGBITS_CONFIG_VERSION=0.0.5
+ENV WINGBITS_CONFIG_VERSION=0.0.7
 
 ARG PERM_INSTALL="wget curl gettext-base tini ncurses-bin zlib1g lighttpd gettext-base libusb-1.0-0 librtlsdr0 rtl-sdr libncurses6 jq"
 
